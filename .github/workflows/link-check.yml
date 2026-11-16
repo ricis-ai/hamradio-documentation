@@ -39,7 +39,11 @@ jobs:
           # own --output (from the `output` input below), and lychee errors
           # out if --output is also in args. The report lands at the path
           # given by `output`, which the issue step below reads.
-          args: --config .lychee.toml --format markdown --no-progress "./**/*.html" "./**/*.md"
+          # Only the live pages are checked. links-manifest.md is deliberately
+          # NOT checked: it documents links that failed verification (dead
+          # Kenwood, Yaesu, and FlexRadio URLs listed on purpose), so
+          # checking it fails the run every time.
+          args: --config .lychee.toml --format markdown --no-progress "./index.html" "./README.md"
           output: lychee-report.md
           fail: true
 
