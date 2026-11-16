@@ -1,0 +1,33 @@
+# lychee configuration for the VIH amateur radio manuals index.
+#
+# See links-manifest.md for the per-link verification record.
+
+# Accept the usual success codes plus 429 (rate limiting is transient, not a
+# broken link — lychee retries before giving up).
+accept = [200, 201, 202, 203, 204, 205, 206, 207, 208, 226, 429]
+
+# Be patient: some manual hosts are slow, and PDFs are large.
+timeout = 30
+max_retries = 3
+
+# A browser user agent: several manual hosts reject lychee's default agent.
+user_agent = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36"
+
+# Hosts that block automated requests and would otherwise fail every run.
+# Each was verified by hand (see links-manifest.md) and must be spot-checked
+# by a person from time to time, because lychee cannot check them.
+exclude = [
+  # Kenwood's site returns 403 to bots (curl and lychee alike) but serves
+  # browsers normally. Verified live 2026-11-15 via a browser text fetch.
+  "https://www.kenwood.com/*",
+  # ManualsLib returns 403 to bots but serves browsers normally. Verified
+  # live 2026-11-15 via a browser text fetch.
+  "https://www.manualslib.com/*",
+  # Facebook group links need a signed-in session; lychee cannot check them.
+  # The back-to-group links are covered by the HamClock return-path tests.
+  "https://www.facebook.com/*",
+  "https://m.facebook.com/*",
+]
+
+# Fragments (the #section jump links) are page-internal; lychee checks them
+# against the local files, which is what we want. Do not exclude them.
