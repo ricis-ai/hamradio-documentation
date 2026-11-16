@@ -35,7 +35,13 @@ jobs:
         id: lychee
         uses: lycheeverse/lychee-action@v2
         with:
-          args: --config .lychee.toml --format markdown --output lychee-report.md --no-progress "./**/*.html" "./**/*.md"
+          # Report path goes through the action's `output` input, not --output
+          # in args: setting it in both places makes the action refuse to run.
+          output: lychee-report.md
+          # Only the live pages are checked. links-manifest.md is deliberately
+          # NOT checked: it documents links that failed verification, so
+          # checking it would fail the run on purpose.
+          args: --config .lychee.toml --format markdown --no-progress "./index.html" "./README.md"
           fail: true
 
       - name: Open an issue when the scheduled check fails
