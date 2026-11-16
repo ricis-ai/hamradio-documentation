@@ -1,0 +1,48 @@
+# Weekly link check for the VIH amateur radio manuals index.
+#
+# Runs lychee over every HTML and Markdown file in the repo. On a scheduled
+# run, a failure opens a GitHub issue containing the lychee report so a human
+# can triage it (lychee cannot detect soft 404s, and some hosts block bots —
+# see .lychee.toml for the exclusions and why they exist).
+#
+# Also runs on pushes that change the index, but push runs do NOT open an
+# issue — they just fail the check so the author sees it.
+
+name: Check manual links
+
+on:
+  schedule:
+    # Mondays 14:00 UTC.
+    - cron: "0 14 * * 1"
+  push:
+    paths:
+      - "index.html"
+      - "**.md"
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  issues: write
+
+jobs:
+  link-check:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out the repository
+        uses: actions/checkout@v4
+
+      - name: Check links with lychee
+        id: lychee
+        uses: lycheeverse/lychee-action@v2
+        with:
+          args: --config .lychee.toml --format markdown --output lychee-report.md --no-progress "./**/*.html" "./**/*.md"
+          fail: true
+
+      - name: Open an issue when the scheduled check fails
+        if: failure() && github.event_name == 'schedule'
+        uses: peter-evans/create-issue-from-file@v5
+        with:
+          title: "Link check failed — broken links in the manuals index"
+          content-filepath: lychee-report.md
+          labels: |
+            broken-link
