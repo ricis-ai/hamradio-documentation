@@ -44,7 +44,7 @@
       .skip-link:focus { left: 0.5rem; top: 0.5rem; }
 
       a { color: var(--fair); }
-      a:focus-visible, button:focus-visible {
+      a:focus-visible, button:focus-visible, input:focus-visible {
         outline: 4px solid var(--focus);
         outline-offset: 3px;
       }
@@ -108,6 +108,37 @@
       .fmt-page { color: var(--muted); font-weight: bold; }
 
       .small { font-size: 1rem; color: var(--muted); }
+
+      label { display: block; font-size: 1.2rem; font-weight: bold; margin: 0.5rem 0 0.25rem; }
+      .hint { font-size: 1.05rem; color: var(--muted); margin: 0.25rem 0 0.5rem; }
+      input[type="search"] {
+        display: block;
+        width: 100%;
+        min-height: 3.5rem;
+        padding: 0.75rem 1rem;
+        font: inherit;
+        font-size: 1.4rem;
+        color: var(--text);
+        background: #111111;
+        border: 3px solid var(--border);
+        margin: 0.25rem 0 0.75rem;
+      }
+      button.secondary {
+        display: block;
+        width: 100%;
+        min-height: 3rem;
+        margin: 0.5rem 0;
+        padding: 0.7rem 1rem;
+        font: inherit;
+        font-size: 1.15rem;
+        font-weight: bold;
+        color: var(--text);
+        background: var(--panel);
+        border: 3px solid var(--fair);
+        cursor: pointer;
+      }
+      button.secondary:hover { background: #1f1f1f; }
+      .status { font-size: 1.2rem; font-weight: bold; min-height: 1.8em; margin: 0.5rem 0; }
     </style>
   </head>
   <body>
@@ -118,6 +149,15 @@
       <h1>Amateur Radio Manuals</h1>
       <p>An index of instruction and service manuals for amateur radio gear, from Visually Inconvenienced Hams. First edition — 15 November 2026.</p>
       <p>This page is a list of links only. Every link opens the manual on the maker's own website or in a public archive. Nothing is stored on this page, so you always get the newest version the maker offers.</p>
+
+      <form id="search-form" role="search">
+        <label for="search-input">Search the manuals</label>
+        <p class="hint" id="search-hint">Try a model number like IC-7300, a maker like Yaesu, or a word like service manual.</p>
+        <input type="search" id="search-input" name="search" aria-describedby="search-hint" autocomplete="off" spellcheck="false" />
+        <button type="button" class="secondary" id="clear-search" hidden>Clear search</button>
+      </form>
+      <p id="load-status" class="status" role="status">Loading the manual list…</p>
+      <div id="search-results" hidden></div>
 
       <nav class="contents" aria-label="Contents">
         <h2>Contents</h2>
@@ -158,178 +198,95 @@
 
         <h2 id="icom">Icom</h2>
         <p>Icom keeps manuals for current and discontinued models in one searchable library. The library holds over 200 amateur radio documents.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.icomjapan.com/support/manual/">Icom manual library — search by model</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> Type your model, such as IC-7300, in the search box.</span></li>
-        </ul>
+                <ul class="manual-list" data-list="icom"></ul>
         <h3>Popular Icom manuals</h3>
         <p>Each link below opens Icom's download page for that manual. Read the short terms on the page, then press the download button. The manual itself is a text PDF.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.icomjapan.com/support/manual/2271/">IC-7300 Full Manual (English)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://www.icomjapan.com/support/manual/2272/">IC-7300 Basic Manual (English)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://www.icomjapan.com/support/manual/3060/">IC-705 Basic Manual (English)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://www.icomjapan.com/support/manual/3063/">IC-705 Advanced Manual (English)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://www.icomjapan.com/support/manual/2156/">IC-9700 Basic Manual (English)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://www.icomjapan.com/support/manual/2166/">IC-9700 Advanced Manual (English)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="icom-popular"></ul>
 
         <h2 id="yaesu">Yaesu</h2>
         <p>Yaesu has no single manual library. Each radio's manuals sit on that radio's own product page, under the Files tab. Open the Yaesu site, find your model, then open the Files tab.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.yaesu.com/">Yaesu website — find your model, then open the Files tab</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="yaesu"></ul>
         <h3>Popular Yaesu manuals</h3>
-        <ul class="manual-list">
-          <li><a href="https://yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-991A_OM_ENG_EH067M205_2111A-KS-1.pdf">FT-991A Operating Manual (PDF, about 36 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span> Large file. Best on Wi-Fi.</span></li>
-          <li><a href="https://yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-991A_CAT_OM_ENG_1711-D.pdf">FT-991A CAT Operation Reference Manual (PDF, about 1.4 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://www.yaesu.com/Files/4CB893D7-1018-01AF-FA97E9E9AD48B50C/FT-710_OM_ENG_EH080H201_2307N-GS.pdf">FT-710 Operation Manual (PDF, about 30 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span> Large file. Best on Wi-Fi.</span></li>
-        </ul>
+                <ul class="manual-list" data-list="yaesu-popular"></ul>
 
         <h2 id="kenwood">Kenwood</h2>
         <p>Kenwood keeps manuals for current and discontinued models online. The software downloads page lists in-depth manuals and setting manuals by model. The JVC Kenwood manual portal is the search page for instruction manuals.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.kenwood.com/i/products/info/amateur/software_download.html">Kenwood amateur radio software and manual downloads — by model</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> In-depth manuals are listed under each model, for example TS-890S and TS-590SG.</span></li>
-          <li><a href="https://manuals.jvckenwood.com/">JVC Kenwood manual portal — search for instruction manuals</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="kenwood"></ul>
         <p>No Kenwood manuals are linked directly here yet. Kenwood's manual files sit behind its download pages, and we link only to addresses we have checked. The two pages above are the checked way in.</p>
 
         <h2 id="elecraft">Elecraft</h2>
         <p>Elecraft lists manuals for current and retired products on one page, with a download size shown for each file.</p>
-        <ul class="manual-list">
-          <li><a href="https://Elecraft.com/pages/manuals-downloads">Elecraft manuals and downloads page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="elecraft"></ul>
         <h3>Popular Elecraft manuals</h3>
-        <ul class="manual-list">
-          <li><a href="https://ftp.elecraft.com/K4/Manuals%20Downloads/K4BuiltInOperatingManualrevD14%28printable%29.pdf">K4 Built-In Operating Manual, printable version (PDF, about 1.8 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://ftp.elecraft.com/K3S/Manuals%20Downloads/K3S%20Owner's%20man%20A1.pdf">K3S Owner's Manual (PDF, about 5.3 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://ftp.elecraft.com/KX3/Manuals%20Downloads/E740163%20KX3%20Owner's%20man%20Rev%20C5.pdf">KX3 Owner's Manual, revision C5 (PDF, about 3.5 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://ftp.elecraft.com/KX2/Manuals%20Downloads/KX2%20owner's%20man%20B2.pdf">KX2 Owner's Manual (PDF, about 3.3 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://ftp.elecraft.com/KH1/Manuals%20Downloads/KH1%20Owner's%20Manual,%20rev%20B7.pdf">KH1 Owner's Manual, revision B7 (PDF, about 2.6 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://cdn.shopify.com/s/files/1/2029/4979/files/E740301_KPA1500_Owner_s_Manual_Rev_B1.pdf?v=1790877878">KPA1500 Owner's Manual, revision B1 (PDF, about 2.1 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="elecraft-popular"></ul>
 
         <h2 id="alinco">Alinco</h2>
         <p>Alinco lists its manuals on its download archive page, under the Instructions tab.</p>
-        <ul class="manual-list">
-          <li><a href="https://alinco.com/download-archive/?download-tab=instructions">Alinco download archive — Instructions tab</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="alinco"></ul>
         <p>No Alinco manuals are linked directly here yet. Alinco's manual files load through its archive page, and we link only to addresses we have checked.</p>
 
         <h2 id="flexradio">FlexRadio</h2>
         <p>FlexRadio puts its guides and documents on its documentation page. Software and release notes are on its software page.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.flexradio.com/documentation/">FlexRadio documentation page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-          <li><a href="https://www.flexradio.com/software/">FlexRadio software page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="flexradio"></ul>
         <p>No FlexRadio manuals are linked directly here yet. The documentation page is the checked way in.</p>
 
         <h2 id="xiegu">Xiegu</h2>
         <p>Xiegu manuals are on the Xiegu sites and on the Radioddity site, which mirrors Xiegu manuals and guides in English.</p>
-        <ul class="manual-list">
-          <li><a href="https://xiegu.eu/downloads">Xiegu Europe downloads page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-          <li><a href="https://www.cqxiegu.com/zlxz">Xiegu downloads page (China site)</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-          <li><a href="https://radioddity.com/pages/xiegu-download">Radioddity Xiegu download page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="xiegu"></ul>
         <h3>Popular Xiegu manuals</h3>
-        <ul class="manual-list">
-          <li><a href="https://radioddity.s3.amazonaws.com/Radioddity_G90_User_Manual_V5_June_2025.pdf">G90 User Manual, version 5, June 2025 (PDF, about 2.3 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://radioddity.s3.amazonaws.com/2024-09-09_Extended_manual_for_Xiegu_X6100_-_V1.1.8.pdf">X6100 Extended Manual, version 1.1.8 (PDF, about 6 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-          <li><a href="https://radioddity.s3.amazonaws.com/Radioddity_G106_User_Manual_V1.4.pdf">G106 User Manual, version 1.4 (PDF, about 1.1 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="xiegu-popular"></ul>
 
         <h2 id="anytone">AnyTone</h2>
         <p>AnyTone lists manuals, firmware, and programming software on one download page.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.anytone.net/download">AnyTone download page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="anytone"></ul>
         <p>No AnyTone manuals are linked directly here yet. The download page is the checked way in.</p>
 
         <h2 id="radioddity">Radioddity, Ailunce, and Retevis</h2>
         <p>These three brands are closely linked. Retevis lists manuals on its own manual page. Ailunce lists its files in its Resource Center. Radioddity also hosts the Xiegu manuals listed in the Xiegu section above.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.retevis.com/downloads/manual">Retevis manual downloads page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-          <li><a href="https://www.ailunce.com/ResourceCenter">Ailunce Resource Center</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="radioddity"></ul>
         <h3>Ailunce manual</h3>
-        <ul class="manual-list">
-          <li><a href="https://www.ailunce.com/Themes/Ailunce/Assets/file/Ailunce%20HS1%20User's%20Manual.pdf">Ailunce HS1 User's Manual (PDF, about 1.2 megabytes)</a><span class="label"><span class="fmt-text">Text PDF — screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="ailunce-manual"></ul>
 
         <h2 id="modsdk">mods.dk — the big manual archive</h2>
         <div class="note">
           <p><strong>Most files here are scanned pictures, not text.</strong> <span class="fmt-scan">Scanned image PDF — not screen-reader-readable.</span> The manuals on mods.dk are mostly scans of old paper manuals. A screen reader cannot read them. The files are also mostly zipped. You download a zip file, then open it to find the PDF inside.</p>
         </div>
         <p>mods.dk holds over 13,000 manual files across about 153 brands. It is the first place to look for a radio the maker no longer sells.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.mods.dk/manual.php">mods.dk manual archive — all brands</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> <span class="fmt-scan">Most manuals here are scanned image PDFs — not screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="modsdk"></ul>
         <h3>mods.dk by brand</h3>
-        <ul class="manual-list">
-          <li><a href="https://www.mods.dk/manual.php?brand=icom">mods.dk — Icom manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=yaesu">mods.dk — Yaesu manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=kenwood">mods.dk — Kenwood manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=heathkit">mods.dk — Heathkit manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=drake">mods.dk — Drake manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=collins">mods.dk — Collins manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=ten-tec">mods.dk — Ten-Tec manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=hallicrafters">mods.dk — Hallicrafters manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=hammarlund">mods.dk — Hammarlund manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=national">mods.dk — National manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://www.mods.dk/manual.php?brand=swan">mods.dk — Swan manuals</a><span class="label"><span class="fmt-scan">Mostly scanned image PDFs — not screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="modsdk-brands"></ul>
 
         <h2 id="rigpix">RigPix</h2>
         <div class="note">
           <p><strong>Most files here are scanned pictures, not text.</strong> <span class="fmt-scan">Scanned image PDF — not screen-reader-readable.</span> RigPix holds user manuals and service manuals, mostly as scans of paper manuals. A screen reader cannot read them.</p>
         </div>
-        <ul class="manual-list">
-          <li><a href="https://www.rigpix.com/schematicsnstuff.htm">RigPix schematics and manuals page</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> <span class="fmt-scan">Most manuals here are scanned image PDFs — not screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="rigpix"></ul>
 
         <h2 id="bama">BAMA — Boat Anchor Manual Archive</h2>
         <div class="note">
           <p><strong>Everything here is scanned pictures, not text.</strong> <span class="fmt-scan">Scanned image PDF — not screen-reader-readable.</span> BAMA is a library of scans of old paper manuals. A screen reader cannot read them. The BAMA site also asks for cookies to be turned on before it lets you download a file.</p>
         </div>
         <p>BAMA holds manuals for hundreds of old brands, sorted into one folder per brand. The folders below are the ones our members ask about most.</p>
-        <ul class="manual-list">
-          <li><a href="https://bama.edebris.com/manuals/">BAMA manual archive — all brands</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> <span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="bama"></ul>
         <h3>BAMA by brand</h3>
-        <ul class="manual-list">
-          <li><a href="https://bama.edebris.com/manuals/drake/">BAMA — Drake manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/collins/">BAMA — Collins manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/hallicra/">BAMA — Hallicrafters manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/hammarlu/">BAMA — Hammarlund manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/tentec/">BAMA — Ten-Tec manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/swan/">BAMA — Swan manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/national/">BAMA — National manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/icom/">BAMA — Icom manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/kenwood/">BAMA — Kenwood manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/yaesu/">BAMA — Yaesu manuals</a><span class="label"><span class="fmt-scan">Scanned image PDFs — not screen-reader-readable.</span></span></li>
-          <li><a href="https://bama.edebris.com/manuals/heath/">BAMA — Heathkit folder (empty — see note below)</a><span class="label"><span class="fmt-page">Web page — the folder holds no manuals.</span> BAMA took its Heathkit manuals down in 2008, after the company that owned the Heathkit rights objected. The folder is still there, but it holds no manuals. For Heathkit manuals, try the <a href="#dlarc">DLARC collection on the Internet Archive</a> or <a href="#modsdk">mods.dk</a> instead.</span></li>
-        </ul>
+                <ul class="manual-list" data-list="bama-brands"></ul>
 
         <h2 id="dlarc">DLARC — Internet Archive</h2>
         <div class="note">
           <p><strong>Most files here are scanned pictures, not text.</strong> <span class="fmt-scan">Scanned image PDF — not screen-reader-readable.</span> The DLARC collection is mostly scans of old books, magazines, and manuals. A screen reader cannot read most of them. A few items do have readable text. Each item page says what formats it offers.</p>
         </div>
         <p>DLARC is the Digital Library of Amateur Radio and Communications. It is a project of the Internet Archive. It holds a very large collection of amateur radio books, magazines, and manuals, including Heathkit manuals.</p>
-        <ul class="manual-list">
-          <li><a href="https://archive.org/details/dlarc-manuals">DLARC manuals collection on the Internet Archive</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> <span class="fmt-scan">Most manuals here are scanned image PDFs — not screen-reader-readable.</span></span></li>
-        </ul>
+                <ul class="manual-list" data-list="dlarc"></ul>
 
         <h2 id="manualslib">ManualsLib</h2>
         <p>ManualsLib is a large general manual library. It covers far more than radio, but it holds many radio manuals too. Search it by brand and model.</p>
-        <ul class="manual-list">
-          <li><a href="https://www.manualslib.com/">ManualsLib — search for manuals</a><span class="label"><span class="fmt-page">Web page — lists manuals.</span> <span class="fmt-unknown">Format not checked — varies by manual.</span> Some manuals here are text PDFs. Others are scanned pictures.</span></li>
-        </ul>
+                <ul class="manual-list" data-list="manualslib"></ul>
 
         <h2 id="broken-link">If a link is broken</h2>
         <p>Links break. A maker may move a manual or take it down. If a link on this page stops working, try these steps.</p>
         <ol>
           <li>Try the Wayback Machine. It keeps old copies of web pages. Open the link below, paste the dead address into the box, and pick a saved date.
-            <ul class="manual-list">
-              <li><a href="https://web.archive.org/">Wayback Machine — find old copies of a page</a><span class="label"><span class="fmt-page">Web page.</span></span></li>
-            </ul>
+                        <ul class="manual-list" data-list="broken-link"></ul>
           </li>
           <li>Try the archives. The same manual is often in more than one archive. Check <a href="#modsdk">mods.dk</a>, <a href="#bama">BAMA</a>, <a href="#rigpix">RigPix</a>, and the <a href="#dlarc">DLARC collection</a>.</li>
           <li>Tell us. Post in the Visually Inconvenienced Hams group and say which link broke. The links on this page are checked every week, and a broken link gets fixed or replaced.</li>
@@ -344,6 +301,139 @@
 
       <a class="back-link" href="https://m.facebook.com/groups/742838019382868">Back to Visually Inconvenienced Hams on Facebook</a>
     </div>
+
+    <script src="manuals.js"></script>
+    <script>
+(function () {
+  "use strict";
+  var M = window.ManualsSearch;
+
+  function $(id) { return document.getElementById(id); }
+
+  function esc(text) {
+    return String(text).replace(/&/g, "&amp;").replace(/</g, "&lt;").replace(/>/g, "&gt;").replace(/"/g, "&quot;");
+  }
+
+  var searchForm = $("search-form");
+  var searchInput = $("search-input");
+  var clearBtn = $("clear-search");
+  var loadStatus = $("load-status");
+  var resultsBox = $("search-results");
+  var contentsNav = document.querySelector("nav.contents");
+  var mainEl = $("main");
+
+  var MANUALS = null;
+
+  /* One browse-list item, exactly as the first edition printed it: the
+   * link, then the format label and any note from the data. */
+  function browseItem(entry) {
+    var html = '<li><a href="' + esc(entry.url) + '">' + esc(entry.name) + '</a>'
+      + '<span class="label">' + entry.label;
+    if (entry.note) html += " " + entry.note;
+    html += "</span></li>";
+    return html;
+  }
+
+  function renderBrowse() {
+    var lists = document.querySelectorAll("ul[data-list]");
+    for (var i = 0; i < lists.length; i++) {
+      var key = lists[i].getAttribute("data-list");
+      var items = [];
+      for (var j = 0; j < MANUALS.length; j++) {
+        if (MANUALS[j].list === key) items.push(browseItem(MANUALS[j]));
+      }
+      lists[i].innerHTML = items.join("");
+    }
+  }
+
+  /* One search-result item: the name and link, plus maker, kind, and the
+   * scanned flag where the entry carries one. */
+  function resultItem(entry) {
+    var html = '<li><a href="' + esc(entry.url) + '">' + esc(entry.name) + '</a>'
+      + '<span class="label">' + esc(entry.maker) + " — " + esc(entry.kind) + ".";
+    if (entry.scanned) {
+      html += ' <span class="fmt-scan">Scanned image PDF — not screen-reader-readable.</span>';
+    }
+    html += "</span></li>";
+    return html;
+  }
+
+  function showBrowse() {
+    resultsBox.hidden = true;
+    resultsBox.innerHTML = "";
+    if (contentsNav) contentsNav.hidden = false;
+    if (mainEl) mainEl.hidden = false;
+    clearBtn.hidden = true;
+  }
+
+  function showSearch(query) {
+    var results = M.searchManuals(MANUALS, query);
+    var html = "";
+    if (results.length === 0) {
+      html += '<p class="status" role="status">No manuals match "' + esc(query) + '". Try a maker like Yaesu, or a model number like IC-7300.</p>';
+    } else {
+      html += '<p class="status" role="status">' + results.length
+        + (results.length === 1 ? " manual found." : " manuals found.") + "</p>";
+      var groups = M.groupBySection(results);
+      for (var g = 0; g < groups.length; g++) {
+        html += "<h3>" + esc(groups[g].section) + "</h3>";
+        html += '<ul class="manual-list">';
+        for (var i = 0; i < groups[g].entries.length; i++) {
+          html += resultItem(groups[g].entries[i]);
+        }
+        html += "</ul>";
+      }
+    }
+    resultsBox.innerHTML = html;
+    resultsBox.hidden = false;
+    if (contentsNav) contentsNav.hidden = true;
+    if (mainEl) mainEl.hidden = true;
+    clearBtn.hidden = false;
+  }
+
+  function runSearch() {
+    if (!MANUALS) return;
+    var query = searchInput.value.trim();
+    if (query === "") { showBrowse(); return; }
+    showSearch(query);
+  }
+
+  searchInput.addEventListener("input", runSearch);
+  searchInput.addEventListener("keydown", function (event) {
+    if (event.key === "Escape") {
+      searchInput.value = "";
+      showBrowse();
+    }
+  });
+  searchForm.addEventListener("submit", function (event) {
+    event.preventDefault();
+    runSearch();
+  });
+  clearBtn.addEventListener("click", function () {
+    searchInput.value = "";
+    showBrowse();
+    searchInput.focus();
+  });
+
+  /* ---- Load the manual list (same site, no outside service) ------------ */
+  fetch("manuals.json").then(function (response) {
+    if (!response.ok) throw new Error("manuals.json returned " + response.status);
+    return response.json();
+  }).then(function (data) {
+    MANUALS = data;
+    renderBrowse();
+    loadStatus.textContent = "Manual list loaded: " + data.length + " manuals.";
+  }).catch(function () {
+    loadStatus.textContent = "The manual list did not load. Check your connection, then reload this page.";
+    var retry = document.createElement("button");
+    retry.type = "button";
+    retry.className = "secondary";
+    retry.textContent = "Reload this page";
+    retry.addEventListener("click", function () { window.location.reload(); });
+    loadStatus.parentNode.insertBefore(retry, loadStatus.nextSibling);
+  });
+})();
+</script>
 
 <script>
 (function () {
