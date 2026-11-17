@@ -1,9 +1,11 @@
 # Weekly link check for the VIH amateur radio manuals index.
 #
-# Runs lychee over every HTML and Markdown file in the repo. On a scheduled
-# run, a failure opens a GitHub issue containing the lychee report so a human
-# can triage it (lychee cannot detect soft 404s, and some hosts block bots —
-# see .lychee.toml for the exclusions and why they exist).
+# Runs lychee over every HTML, Markdown, and JSON file in the repo. The
+# manual links live in manuals.json now (the index page renders them from
+# it), so the JSON file is checked too. On a scheduled run, a failure opens
+# a GitHub issue containing the lychee report so a human can triage it
+# (lychee cannot detect soft 404s, and some hosts block bots — see
+# .lychee.toml for the exclusions and why they exist).
 #
 # Also runs on pushes that change the index, but push runs do NOT open an
 # issue — they just fail the check so the author sees it.
@@ -17,6 +19,7 @@ on:
   push:
     paths:
       - "index.html"
+      - "manuals.json"
       - "**.md"
   workflow_dispatch:
 
@@ -39,11 +42,7 @@ jobs:
           # own --output (from the `output` input below), and lychee errors
           # out if --output is also in args. The report lands at the path
           # given by `output`, which the issue step below reads.
-          # Only the live pages are checked. links-manifest.md is deliberately
-          # NOT checked: it documents links that failed verification (dead
-          # Kenwood, Yaesu, and FlexRadio URLs listed on purpose), so
-          # checking it fails the run every time.
-          args: --config .lychee.toml --format markdown --no-progress "./index.html" "./README.md"
+          args: --config .lychee.toml --format markdown --no-progress "./**/*.html" "./**/*.md" "./**/*.json"
           output: lychee-report.md
           fail: true
 
